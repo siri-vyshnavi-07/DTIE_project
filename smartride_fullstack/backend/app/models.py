@@ -30,6 +30,9 @@ class QRToken(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
     token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    # Stored so the same QR can be restored after login/browser restart.
+    # Restrict database/file access because this value is a bearer credential.
+    token_value: Mapped[str | None] = mapped_column(String(128), nullable=True)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     user: Mapped[User] = relationship(back_populates="qr_token")
